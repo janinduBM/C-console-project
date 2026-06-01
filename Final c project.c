@@ -76,7 +76,6 @@ void sortboard();
 void showboard();
 void clearscores();
 
-
 int main() {
     srand(time(NULL));
     int pick;
@@ -154,8 +153,16 @@ void addteam() {
 
         while (1) {
             samename = 0;
-            printf("Enter Team Name: ");
-            scanf("%s", text);
+            printf("Enter Team Name (No spaces allowed): ");
+
+            // Read entire line to check for spaces
+            scanf(" %[^\n]", text);
+
+            // Check if the input contains a space
+            if (strchr(text, ' ') != NULL) {
+                printf("Error: Team name cannot contain spaces! Please try again.\n");
+                continue;
+            }
 
             for (int i = 0; i < numteams; i++) {
                 if (strcmp(teams[i].name, text) == 0) {
@@ -195,7 +202,7 @@ void findteam() {}
 void fixteam()  {}
 void delteam()  {}
 
-// Member 2: Player Management
+// Member 2:Player Management
 
 void addplayer() {
     if (numplayers >= 50) {
@@ -209,8 +216,37 @@ void addplayer() {
     }
 
     players[numplayers].id = numplayers + 1;
-    printf("Enter Player Name: ");
-    scanf("%s", players[numplayers].name);
+    char temp_name[50];
+    int is_duplicate;
+
+    // Duplicate and Space Check
+    while (1) {
+        is_duplicate = 0;
+        printf("Enter Player Name (No spaces allowed): ");
+
+        // Read entire line to catch spaces
+        scanf(" %[^\n]", temp_name);
+
+        // Check if there is a space in the input
+        if (strchr(temp_name, ' ') != NULL) {
+            printf("Error: Player name cannot contain spaces! Please try again.\n");
+            continue;
+        }
+
+        for (int i = 0; i < numplayers; i++) {
+            if (strcmp(players[i].name, temp_name) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (is_duplicate == 1) {
+            printf("Error: The name '%s' is already taken! Please choose a different name.\n", temp_name);
+        } else {
+            strcpy(players[numplayers].name, temp_name);
+            break;
+        }
+    }
 
     printf("\n--- Available Teams to Join ---\n");
     for (int i = 0; i < numteams; i++) {
@@ -485,16 +521,45 @@ void playgame() {
         return;
     }
 
+    // Pre Match Coin Toss
     printf("\n=========================================\n");
-    printf(" MATCH STARTING: TEAM %d VS TEAM %d\n", matches[mindex].teamone, matches[mindex].teamtwo);
+    printf(" PRE-MATCH COIN TOSS \n");
+    printf("=========================================\n");
+    printf("Flipping the coin...\n");
+
+    int toss = rand() % 2;
+    int first_team, second_team;
+
+    if (toss == 0) {
+        printf(">>> Team %d won the toss! They will play FIRST. <<<\n", matches[mindex].teamone);
+        first_team = matches[mindex].teamone;
+        second_team = matches[mindex].teamtwo;
+    } else {
+        printf(">>> Team %d won the toss! They will play FIRST. <<<\n", matches[mindex].teamtwo);
+        first_team = matches[mindex].teamtwo;
+        second_team = matches[mindex].teamone;
+    }
+
+    printf("\n=========================================\n");
+    printf(" MATCH STARTING: TEAM %d VS TEAM %d\n", first_team, second_team);
     printf("=========================================\n");
 
-    int ptsone = playturn(matches[mindex].teamone);
+    int pts_first = playturn(first_team);
 
-    printf("\nPress Enter to start Team %d's turn...", matches[mindex].teamtwo);
+    printf("\nPress Enter to start Team %d's turn...", second_team);
     getchar();
     getchar();
-    int ptstwo = playturn(matches[mindex].teamtwo);
+
+    int pts_second = playturn(second_team);
+
+    int ptsone, ptstwo;
+    if (first_team == matches[mindex].teamone) {
+        ptsone = pts_first;
+        ptstwo = pts_second;
+    } else {
+        ptsone = pts_second;
+        ptstwo = pts_first;
+    }
 
     printf("\n=========================================\n");
     printf(" FINAL MATCH RESULTS\n");
@@ -521,7 +586,7 @@ void playgame() {
     printf("Leaderboard and Match Status have been updated automatically.\n");
 }
 
-// Member 4: Match Scheduling
+// Member 4 :Match Scheduling
 
 void makematch() {
     if (numteams < 2) {
@@ -677,7 +742,6 @@ void showmatches() {
 
 void findmatch() {}
 void dropmatch() {}
-
 // Member 5: Leaderboard and Scoring
 
 void startscore(int tid) {
@@ -700,9 +764,23 @@ void addscore(int tid, int pts, int win) {
     }
 }
 
-void sortboard() {}
+void sortboard() {
+// Bubble sort ranks teams from highest points to lowest points
+    for (int i = 0; i < numscores - 1; i++) {
+        for (int j = 0; j < numscores - i - 1; j++) {
+            if (scores[j].points < scores[j+1].points) {
+                struct score temp = scores[j];
+                scores[j] = scores[j+1];
+                scores[j+1] = temp;
+            }
+        }
+    }
+}
 
 void showboard() {
+// Call the sorting function before printing the board
+    sortboard();
+
     printf("\n TOURNAMENT LEADERBOARD \n");
     printf("------------------------------------------------------------------\n");
     printf("Team ID | Total Points | Matches Won | Pending Games | Finished \n");
