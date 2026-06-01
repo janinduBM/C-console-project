@@ -1,0 +1,26 @@
+1. #include <stdlib.h> (Standard Library)
+ Random Number Generation: Functions like rand() and srand() are used to generate random numbers.
+
+2. #include <string.h> (String Handling)
+You include this when you need to manipulate C-style strings (arrays of characters ending with a null terminator \0) or raw blocks of memory.
+
+ Length: strlen() tells you how many characters are in a string.
+
+ Copying: strcpy() and strncpy() copy the contents of one string to another.
+
+ Concatenation: strcat() and strncat() append one string to the end of another.
+
+ Comparison: strcmp() checks if two strings are identical (useful for checking passwords or commands).
+
+ Memory Manipulation: memset(), memcpy(), and memcmp() allow you to set, copy, or compare raw memory buffers.
+
+3. #include <time.h> (Time and Date)
+ You include this when your program needs to know the current time, measure how long something took, or manipulate dates.
+
+ Current Time: time() grabs the current calendar time.
+
+ Random Seed: It is almost always used alongside <stdlib.h> to seed the random number generator, usually written as srand(time(NULL));. If you don't use the current time as a seed, rand()        will spit out the exact same sequence of numbers every time you run the program.
+
+ Benchmarking: clock() measures how much CPU time your program has consumed, which is great for testing the speed of algorithms.
+
+ Formatting: strftime() and ctime() convert raw time numbers into human-readable text (e.g., "Mon Jun  1 21:48:43 2026").
