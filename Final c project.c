@@ -34,7 +34,7 @@ struct score {
     int wins;
 };
 
-struct team   teams[10];
+struct team  teams[10];
 struct player players[50];
 struct game   games[5];
 struct match  matches[10];
@@ -87,11 +87,11 @@ int main() {
         printf("=========================================\n");
         printf("1. Team Management\n");
         printf("2. Player Management\n");
-        printf("3. Play Scheduled Bomb Arena Match\n");
-        printf("4. Match Scheduling\n");
+        printf("3. Match Scheduling\n");
+        printf("4. Play Scheduled Bomb Arena Match\n");
         printf("5. Manual Match Override\n");
-        printf("6. View Live Leaderboard\n");
-        printf("7. View All Players & Teams\n");
+        printf("6. View All Players & Teams\n");
+        printf("7. View Live Leaderboard\n");
         printf("0. Exit\n");
         printf("Enter your choice (Numbers only): ");
 
@@ -104,11 +104,11 @@ int main() {
         switch (pick) {
             case 1: addteam();     break;
             case 2: addplayer();   break;
-            case 3: playgame();    break;
-            case 4: makematch();   break;
+            case 3: makematch();   break;
+            case 4: playgame();    break;
             case 5: finishmatch(); break;
-            case 6: showboard();   break;
-            case 7: showplayers(); break;
+            case 6: showplayers(); break;
+            case 7: showboard();   break;
             case 0:
                 printf("Exiting Tournament System...\n");
                 exit(0);
@@ -722,7 +722,7 @@ void showboard() {
             }
         }
 
-        printf("   %2d   |      %3d     |      %2d     |       %2d      |    %2d\n",
+        printf("   %2d   |      %3d      |      %2d      |       %2d      |    %2d\n",
             scores[i].teamid,
             scores[i].points,
             scores[i].wins,
