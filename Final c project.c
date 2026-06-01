@@ -10,8 +10,8 @@ struct team {
 };
 
 struct player {
-    int         id;
-    char        name[50];
+    int  id;
+    char name[50];
     struct team myteam;
 };
 
