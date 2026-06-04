@@ -10,8 +10,8 @@ struct team {
 };
 
 struct player {
-    int  id;
-    char name[50];
+    int         id;
+    char        name[50];
     struct team myteam;
 };
 
@@ -34,29 +34,39 @@ struct score {
     int wins;
 };
 
+// Global Arrays
 struct team  teams[10];
 struct player players[50];
 struct game   games[5];
 struct match  matches[10];
 struct score  scores[10];
 
+// Counters
 int numteams   = 0;
 int numplayers = 0;
 int nummatches = 0;
 int numscores  = 0;
 
+// Menus
+void team_menu();
+void player_menu();
+void match_menu();
+
+// Team Management
 void addteam();
 void showteams();
 void findteam();
 void fixteam();
 void delteam();
 
+// Player Management
 void addplayer();
 void showplayers();
 void findplayer();
 void fixplayer();
 void delplayer();
 
+// Bomb Arena Gameplay
 void makegrid(int map[][16]);
 void drawgrid(int map[][16]);
 void putbombs(int map[][16], int bombs[][16]);
@@ -64,12 +74,14 @@ int  checkstep(int row, int col, int bombs[][16]);
 int  playturn(int tid);
 void playgame();
 
+// Match Scheduling
 void makematch();
 void showmatches();
 void finishmatch();
 void findmatch();
 void dropmatch();
 
+// Scoring
 void startscore(int tid);
 void addscore(int tid, int pts, int win);
 void sortboard();
@@ -82,15 +94,15 @@ int main() {
 
     while (1) {
         printf("\n=========================================\n");
-        printf(" E-SPORTS BOMB ARENA TOURNAMENT \n");
+        printf("     E-SPORTS BOMB ARENA TOURNAMENT      \n");
         printf("=========================================\n");
         printf("1. Team Management\n");
         printf("2. Player Management\n");
-        printf("3. Match Scheduling\n");
+        printf("3. Match Management\n");
         printf("4. Play Scheduled Bomb Arena Match\n");
-        printf("5. Manual Match Override\n");
-        printf("6. View All Players & Teams\n");
-        printf("7. View Live Leaderboard\n");
+        printf("5. View All Players & Teams\n");
+        printf("6. View Live Leaderboard\n");
+        printf("7. Clear Leaderboard Scores\n");
         printf("0. Exit\n");
         printf("Enter your choice (Numbers only): ");
 
@@ -101,13 +113,16 @@ int main() {
         }
 
         switch (pick) {
-            case 1: addteam();     break;
-            case 2: addplayer();   break;
-            case 3: makematch();   break;
+            case 1: team_menu();   break;
+            case 2: player_menu(); break;
+            case 3: match_menu();  break;
             case 4: playgame();    break;
-            case 5: finishmatch(); break;
-            case 6: showplayers(); break;
-            case 7: showboard();   break;
+            case 5:
+                showteams();
+                showplayers();
+                break;
+            case 6: showboard();   break;
+            case 7: clearscores(); break;
             case 0:
                 printf("Exiting Tournament System...\n");
                 exit(0);
@@ -118,7 +133,103 @@ int main() {
     return 0;
 }
 
+// ==========================================
+// SUB-MENUS
+// ==========================================
+
+void team_menu() {
+    int pick;
+    while (1) {
+        printf("\n--- TEAM MANAGEMENT ---\n");
+        printf("1. Add New Team\n");
+        printf("2. Find a Team\n");
+        printf("3. Edit Team Name\n");
+        printf("4. Delete a Team\n");
+        printf("5. View All Teams\n");
+        printf("0. Back to Main Menu\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &pick) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        switch (pick) {
+            case 1: addteam();   break;
+            case 2: findteam();  break;
+            case 3: fixteam();   break;
+            case 4: delteam();   break;
+            case 5: showteams(); break;
+            case 0: return;
+            default: printf("Invalid choice! Try again.\n");
+        }
+    }
+}
+
+void player_menu() {
+    int pick;
+    while (1) {
+        printf("\n--- PLAYER MANAGEMENT ---\n");
+        printf("1. Add New Player\n");
+        printf("2. Find a Player\n");
+        printf("3. Edit Player Name\n");
+        printf("4. Delete a Player\n");
+        printf("5. View All Players\n");
+        printf("0. Back to Main Menu\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &pick) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        switch (pick) {
+            case 1: addplayer();   break;
+            case 2: findplayer();  break;
+            case 3: fixplayer();   break;
+            case 4: delplayer();   break;
+            case 5: showplayers(); break;
+            case 0: return;
+            default: printf("Invalid choice! Try again.\n");
+        }
+    }
+}
+
+void match_menu() {
+    int pick;
+    while (1) {
+        printf("\n--- MATCH MANAGEMENT ---\n");
+        printf("1. Schedule a New Match\n");
+        printf("2. Find a Match\n");
+        printf("3. Manual Match Override (Force Finish)\n");
+        printf("4. Delete/Drop a Match\n");
+        printf("5. View All Scheduled Matches\n");
+        printf("0. Back to Main Menu\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &pick) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        switch (pick) {
+            case 1: makematch();   break;
+            case 2: findmatch();   break;
+            case 3: finishmatch(); break;
+            case 4: dropmatch();   break;
+            case 5: showmatches(); break;
+            case 0: return;
+            default: printf("Invalid choice! Try again.\n");
+        }
+    }
+}
+
+// ==========================================
 // Member 1: Team Management
+// ==========================================
 
 void addteam() {
     if (numteams < 10) {
@@ -155,10 +266,8 @@ void addteam() {
             samename = 0;
             printf("Enter Team Name (No spaces allowed): ");
 
-            // Read entire line to check for spaces
             scanf(" %[^\n]", text);
 
-            // Check if the input contains a space
             if (strchr(text, ' ') != NULL) {
                 printf("Error: Team name cannot contain spaces! Please try again.\n");
                 continue;
@@ -192,17 +301,133 @@ void addteam() {
 }
 
 void showteams() {
+    if (numteams == 0) {
+        printf("\nNo teams registered yet.\n");
+        return;
+    }
     printf("\n--- Registered Teams ---\n");
     for (int i = 0; i < numteams; i++) {
         printf("ID: %d | Name: %s | Players: %d\n", teams[i].id, teams[i].name, teams[i].count);
     }
 }
 
-void findteam() {}
-void fixteam()  {}
-void delteam()  {}
+void findteam() {
+    if (numteams == 0) {
+        printf("No teams registered yet.\n");
+        return;
+    }
 
-// Member 2:Player Management
+    int tid, found = 0;
+    printf("\nEnter Team ID to find (Numbers only): ");
+
+    if (scanf("%d", &tid) != 1) {
+        printf("Error: Invalid input! Please enter numbers only.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < numteams; i++) {
+        if (teams[i].id == tid) {
+            printf("\n--- Team Found ---\n");
+            printf("ID: %d | Name: %s | Players: %d\n", teams[i].id, teams[i].name, teams[i].count);
+            found = 1;
+            break;
+        }
+    }
+
+    if (found == 0) {
+        printf("Error: Team ID %d not found.\n", tid);
+    }
+}
+
+void fixteam() {
+    if (numteams == 0) {
+        printf("No teams registered yet.\n");
+        return;
+    }
+
+    int tid, found = -1;
+    printf("\nEnter Team ID to edit (Numbers only): ");
+
+    if (scanf("%d", &tid) != 1) {
+        printf("Error: Invalid input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < numteams; i++) {
+        if (teams[i].id == tid) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found != -1) {
+        char new_name[50];
+        printf("Enter new Team Name (No spaces allowed): ");
+        scanf(" %[^\n]", new_name);
+
+        if (strchr(new_name, ' ') != NULL) {
+            printf("Error: Team name cannot contain spaces! Update failed.\n");
+            return;
+        }
+
+        strcpy(teams[found].name, new_name);
+
+        for (int i = 0; i < numplayers; i++) {
+            if (players[i].myteam.id == tid) {
+                strcpy(players[i].myteam.name, new_name);
+            }
+        }
+
+        printf("Team updated successfully!\n");
+    } else {
+        printf("Error: Team ID %d not found.\n", tid);
+    }
+}
+
+void delteam() {
+    if (numteams == 0) {
+        printf("No teams registered yet.\n");
+        return;
+    }
+
+    int tid, found = -1;
+    printf("\nEnter Team ID to delete (Numbers only): ");
+
+    if (scanf("%d", &tid) != 1) {
+        printf("Error: Invalid input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < numteams; i++) {
+        if (teams[i].id == tid) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found != -1) {
+        if (teams[found].count > 0) {
+            printf("Error: Cannot delete team! There are still %d players registered to it.\n", teams[found].count);
+            printf("Please delete or move those players first.\n");
+            return;
+        }
+
+        for (int i = found; i < numteams - 1; i++) {
+            teams[i] = teams[i + 1];
+        }
+        numteams--;
+        printf("Team deleted successfully.\n");
+    } else {
+        printf("Error: Team ID %d not found.\n", tid);
+    }
+}
+
+// ==========================================
+// Member 2: Player Management
+// ==========================================
 
 void addplayer() {
     if (numplayers >= 50) {
@@ -219,15 +444,12 @@ void addplayer() {
     char temp_name[50];
     int is_duplicate;
 
-    // Duplicate and Space Check
     while (1) {
         is_duplicate = 0;
         printf("Enter Player Name (No spaces allowed): ");
 
-        // Read entire line to catch spaces
         scanf(" %[^\n]", temp_name);
 
-        // Check if there is a space in the input
         if (strchr(temp_name, ' ') != NULL) {
             printf("Error: Player name cannot contain spaces! Please try again.\n");
             continue;
@@ -288,7 +510,7 @@ void addplayer() {
 
 void showplayers() {
     if (numplayers == 0) {
-        printf("No players registered yet.\n");
+        printf("\nNo players registered yet.\n");
         return;
     }
 
@@ -302,11 +524,119 @@ void showplayers() {
     }
 }
 
-void findplayer() {}
-void fixplayer()  {}
-void delplayer()  {}
+void findplayer() {
+    if (numplayers == 0) {
+        printf("No players registered yet.\n");
+        return;
+    }
 
+    int pid, found = 0;
+    printf("\nEnter Player ID to find (Numbers only): ");
+
+    if (scanf("%d", &pid) != 1) {
+        printf("Error: Invalid input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < numplayers; i++) {
+        if (players[i].id == pid) {
+            printf("\n--- Player Found ---\n");
+            printf("Player ID: %d | Name: %s | Team: %s (Team ID: %d)\n",
+                players[i].id, players[i].name, players[i].myteam.name, players[i].myteam.id);
+            found = 1;
+            break;
+        }
+    }
+
+    if (found == 0) {
+        printf("Error: Player ID %d not found.\n", pid);
+    }
+}
+
+void fixplayer() {
+    if (numplayers == 0) {
+        printf("No players registered yet.\n");
+        return;
+    }
+
+    int pid, found = -1;
+    printf("\nEnter Player ID to edit (Numbers only): ");
+
+    if (scanf("%d", &pid) != 1) {
+        printf("Error: Invalid input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < numplayers; i++) {
+        if (players[i].id == pid) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found != -1) {
+        char new_name[50];
+        printf("Enter new Player Name (No spaces allowed): ");
+        scanf(" %[^\n]", new_name);
+
+        if (strchr(new_name, ' ') != NULL) {
+            printf("Error: Player name cannot contain spaces! Update failed.\n");
+            return;
+        }
+
+        strcpy(players[found].name, new_name);
+        printf("Player updated successfully!\n");
+    } else {
+        printf("Error: Player ID %d not found.\n", pid);
+    }
+}
+
+void delplayer() {
+    if (numplayers == 0) {
+        printf("No players registered yet.\n");
+        return;
+    }
+
+    int pid, found = -1;
+    printf("\nEnter Player ID to delete (Numbers only): ");
+
+    if (scanf("%d", &pid) != 1) {
+        printf("Error: Invalid input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < numplayers; i++) {
+        if (players[i].id == pid) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found != -1) {
+        for (int j = 0; j < numteams; j++) {
+            if (teams[j].id == players[found].myteam.id) {
+                teams[j].count--;
+                break;
+            }
+        }
+
+        for (int i = found; i < numplayers - 1; i++) {
+            players[i] = players[i + 1];
+        }
+        numplayers--;
+
+        printf("Player deleted successfully.\n");
+    } else {
+        printf("Error: Player ID %d not found.\n", pid);
+    }
+}
+
+// ==========================================
 // Member 3: Bomb Arena Gameplay
+// ==========================================
 
 void makegrid(int map[][16]) {
     for (int i = 0; i < 16; i++) {
@@ -451,7 +781,7 @@ int playturn(int tid) {
 
 void playgame() {
     if (nummatches == 0) {
-        printf("Error: No matches scheduled yet! Go to Match Scheduling first.\n");
+        printf("Error: No matches scheduled yet! Go to Match Management first.\n");
         return;
     }
 
@@ -521,7 +851,6 @@ void playgame() {
         return;
     }
 
-    // Pre Match Coin Toss
     printf("\n=========================================\n");
     printf(" PRE-MATCH COIN TOSS \n");
     printf("=========================================\n");
@@ -546,8 +875,10 @@ void playgame() {
 
     int pts_first = playturn(first_team);
 
+    // Clear the input buffer to prevent automatic skipping
+    while (getchar() != '\n');
+
     printf("\nPress Enter to start Team %d's turn...", second_team);
-    getchar();
     getchar();
 
     int pts_second = playturn(second_team);
@@ -586,7 +917,9 @@ void playgame() {
     printf("Leaderboard and Match Status have been updated automatically.\n");
 }
 
-// Member 4 :Match Scheduling
+// ==========================================
+// Member 4: Match Scheduling
+// ==========================================
 
 void makematch() {
     if (numteams < 2) {
@@ -740,9 +1073,76 @@ void showmatches() {
     }
 }
 
-void findmatch() {}
-void dropmatch() {}
+void findmatch() {
+    if (nummatches == 0) {
+        printf("No matches scheduled yet.\n");
+        return;
+    }
+
+    int mid, found = 0;
+    printf("\nEnter Match ID to find (Numbers only): ");
+
+    if (scanf("%d", &mid) != 1) {
+        printf("Error: Invalid input! Please enter numbers only.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < nummatches; i++) {
+        if (matches[i].id == mid) {
+            printf("\n--- Match Found ---\n");
+            printf("Match ID: %d | Team %d VS Team %d | Status: %s\n",
+                matches[i].id,
+                matches[i].teamone,
+                matches[i].teamtwo,
+                (matches[i].done == 0) ? "PENDING" : "FINISHED");
+            found = 1;
+            break;
+        }
+    }
+
+    if (found == 0) {
+        printf("Error: Match ID %d not found.\n", mid);
+    }
+}
+
+void dropmatch() {
+    if (nummatches == 0) {
+        printf("No matches scheduled yet.\n");
+        return;
+    }
+
+    int mid, found = -1;
+    printf("\nEnter Match ID to drop/delete (Numbers only): ");
+
+    if (scanf("%d", &mid) != 1) {
+        printf("Error: Invalid input! Please enter numbers only.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    for (int i = 0; i < nummatches; i++) {
+        if (matches[i].id == mid) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found != -1) {
+        for (int i = found; i < nummatches - 1; i++) {
+            matches[i] = matches[i + 1];
+        }
+        nummatches--;
+        printf("Match dropped successfully.\n");
+    } else {
+        printf("Error: Match ID %d not found.\n", mid);
+    }
+}
+
+
+// ==========================================
 // Member 5: Leaderboard and Scoring
+// ==========================================
 
 void startscore(int tid) {
     scores[numscores].teamid = tid;
@@ -765,7 +1165,6 @@ void addscore(int tid, int pts, int win) {
 }
 
 void sortboard() {
-// Bubble sort ranks teams from highest points to lowest points
     for (int i = 0; i < numscores - 1; i++) {
         for (int j = 0; j < numscores - i - 1; j++) {
             if (scores[j].points < scores[j+1].points) {
@@ -778,7 +1177,6 @@ void sortboard() {
 }
 
 void showboard() {
-// Call the sorting function before printing the board
     sortboard();
 
     printf("\n TOURNAMENT LEADERBOARD \n");
@@ -810,4 +1208,16 @@ void showboard() {
     printf("------------------------------------------------------------------\n");
 }
 
-void clearscores() {}
+void clearscores() {
+    if (numscores == 0) {
+        printf("\nNo scores exist to clear.\n");
+        return;
+    }
+
+    for (int i = 0; i < numscores; i++) {
+        scores[i].points = 0;
+        scores[i].wins = 0;
+    }
+
+    printf("\nAll tournament scores have been successfully reset to 0!\n");
+}
